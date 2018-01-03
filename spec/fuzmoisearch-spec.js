@@ -6,7 +6,7 @@ describe("FuzMoiSearch", function() {
     });
     it("Should return result when matching a string in array of string", function() {
         var list = ['bonjour', 'bonsoir'],
-            search = 'bonjour';
+            search = 'bonjou';
 
         console.info(fuzmoiseach(list, search));
 
