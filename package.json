@@ -1,0 +1,24 @@
+{
+  "name": "memoizedFuzzySearch",
+  "version": "0.0.1",
+  "description": "A minimal memoized fuzzy search javascript library",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jolancornevin/memoizedFuzzySearch.git"
+  },
+  "keywords": [
+    "memoized",
+    "fuzzy",
+    "search"
+  ],
+  "author": "jolancornevin",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/jolancornevin/memoizedFuzzySearch/issues"
+  },
+  "homepage": "https://github.com/jolancornevin/memoizedFuzzySearch#readme"
+}
