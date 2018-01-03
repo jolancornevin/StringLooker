@@ -24,5 +24,8 @@
   "dependencies": {
     "fast-memoize": "^2.2.8",
     "fuse.js": "^3.2.0"
+  },
+  "devDependencies": {
+    "jasmine": "^2.8.0"
   }
 }
