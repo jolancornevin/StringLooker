@@ -1,9 +1,7 @@
-describe("A suite is just a function", function() {
-    var a;
+const fuzmoiseach = require('../fuzmoisearch');
 
-    it("and so is a spec", function() {
-        a = true;
-
-        expect(a).toBe(true);
+describe("FuzMoiSearch", function() {
+    it("Should return empty array by default", function() {
+        expect(fuzmoiseach()).toEqual([]);
     });
 });
