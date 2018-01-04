@@ -7,8 +7,10 @@ describe("FuzMoiSearch", function() {
     });
 
     it("Should return result when matching a string in array of string", function() {
-        var list = ['bonjour', 'bonsoir'],
-            search = 'bonjou';
+        var list = ['bonjour', 'bonsoir'], search = 'bonjou';
         expect(fuzmoiseach(list, search)).toEqual(['bonjour']);
+
+        search = 'bon';
+        expect(fuzmoiseach(list, search)).toEqual(['bonjour', 'bonsoir']);
     });
 });
