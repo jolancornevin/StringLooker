@@ -18,16 +18,7 @@ export default class FuzzySearch {
      * @private
      */
     static _formatResult(results) {
-        var sortedResults = [],
-            result = null,
-            resultsLen = results.length;
-
-        for (let resultIndex = 0; resultIndex < resultsLen; resultIndex++) {
-            result = results[resultIndex];
-            sortedResults.push(result['target']);
-        }
-
-        return sortedResults;
+        return results.map(result => result['target']);
     }
 
     /**
