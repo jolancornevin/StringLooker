@@ -1,10 +1,10 @@
 import fuzzysort from 'fuzzysort';
 
 export default class FuzzySearch {
-    constructor(list, query, threshold) {
+    constructor(list, threshold) {
         this.list = list || [];
-        this.query = query || '';
         this.threshold = threshold || -Infinity;
+        this.cache = {};
     }
 
     static _formatResult(results) {
