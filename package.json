@@ -4,7 +4,8 @@
   "description": "A minimal memoized fuzzy search javascript library",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "jasmine",
+    "build": "babel src -d lib"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,9 @@
     "fuzzysort": "^1.0.3"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
     "jasmine": "^2.8.0"
   }
 }
