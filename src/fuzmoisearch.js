@@ -8,7 +8,7 @@ export default class FuzzySearch {
     constructor(list, threshold) {
         this.list = list || [];
         this.threshold = threshold || -Infinity;
-        this.cache = {};
+        this.cache = new Map();
     }
 
     /**
@@ -27,13 +27,14 @@ export default class FuzzySearch {
      * @returns [string]
      */
     search(query='') {
-        const cachedRes = this.cache[query];
+        const cachedRes = this.cache.get(query);
         if (cachedRes)
             return cachedRes;
 
         const allResults = fuzzysort.go(query, this.list, {'threshold': this.threshold}),
             result = FuzzySearch._formatResult(allResults);
-        this.cache[query] = result;
+
+        this.cache.set(query, result);
 
         return result;
     }
