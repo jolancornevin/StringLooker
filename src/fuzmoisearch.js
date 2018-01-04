@@ -12,7 +12,7 @@ export default class FuzzySearch {
             result = null,
             resultsLen = results.length;
 
-        for (var resultIndex = 0; resultIndex < resultsLen; resultIndex++) {
+        for (let resultIndex = 0; resultIndex < resultsLen; resultIndex++) {
             result = results[resultIndex];
             sortedResults.push(result['target']);
         }
@@ -20,8 +20,15 @@ export default class FuzzySearch {
         return sortedResults;
     }
 
-    search() {
-        var allResults = fuzzysort.go(this.query, this.list, {'threshold': this.threshold});
-        return FuzzySearch._formatResult(allResults);
+    search(query='') {
+        const cachedRes = this.cache[query];
+        if (cachedRes)
+            return cachedRes;
+
+        const allResults = fuzzysort.go(query, this.list, {'threshold': this.threshold}),
+            result = FuzzySearch._formatResult(allResults);
+        this.cache[query] = result;
+
+        return result;
     }
 }
