@@ -7,6 +7,7 @@ const ENABLED = 'ENABLED';
  */
 export default class FuzzySearch {
     constructor(list = [], options = {}) {
+        // TODO prepare
         this.list = list;
         this.options = options;
         this.options.threshold = options.threshold || -Infinity;
@@ -47,7 +48,13 @@ export default class FuzzySearch {
         return result.results;
     }
 
+    /**
+     * Add a new target to the list and also re-compute all indexes to update their results.
+     *
+     * @param target
+     */
     add(target) {
+        // TODO prepare
         this.list.push(target);
 
         this.cache.forEach((cachedValue, cachedQuery) => {
