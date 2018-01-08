@@ -48,6 +48,10 @@ export default class FuzzySearch {
         return result.results;
     }
 
+    reset () {
+        this.cache = new Map();
+    }
+
     /**
      * Add a new target to the list and also re-compute all indexes to update their results.
      *

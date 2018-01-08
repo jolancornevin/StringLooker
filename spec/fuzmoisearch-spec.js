@@ -75,4 +75,21 @@ describe("FuzMoiSearch", function () {
         expect(fuzzy.search(search)).toEqual(['bonjour', 'bonjoureuhe']);
         expect(spy).not.toHaveBeenCalled();
     });
+
+    it("Should clean cache", function () {
+        let list = ['bonjour', 'bonjoureuh', 'bonjoureuhe', 'bonjoureuheuh', 'bonsoir'],
+            search = 'bonjou',
+            fuzzy = new FuzzySearch(list),
+            // We spy on format result because we always use it when doing a request and it's easy to spy
+            spy = spyOn(FuzzySearch, '_formatResult').and.callThrough();
+
+        expect(fuzzy.search(search)).toEqual(['bonjour', 'bonjoureuh', 'bonjoureuhe', 'bonjoureuheuh']);
+        expect(spy).toHaveBeenCalled();
+        spy.calls.reset();
+
+        fuzzy.reset();
+        
+        expect(fuzzy.search(search)).toEqual(['bonjour', 'bonjoureuh', 'bonjoureuhe', 'bonjoureuheuh']);
+        expect(spy).toHaveBeenCalled();
+    });
 });
