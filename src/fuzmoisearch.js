@@ -53,7 +53,7 @@ export default class FuzzySearch {
     }
 
     /**
-     * Add a new target to the list and also re-compute all indexes to update their results.
+     * Add the new target to the list and also re-compute all related indexes
      *
      * @param target
      */
@@ -68,6 +68,10 @@ export default class FuzzySearch {
         });
     }
 
+    /**
+     * Remove the target from the list and re-compute all related indexes
+     * @param target
+     */
     remove(target) {
         let targetIndex = this.list.indexOf(target);
         if (targetIndex == -1)
