@@ -22,8 +22,8 @@ This class will have:
 - some public methods:
   - search: that does the actuall search in the list :white_check_mark:
   - add element to list of items :white_check_mark:
-  - remove element to list of items: same
-  - clear cache
+  - remove element to list of items: :white_check_mark:
+  - clear cache: :white_check_mark:
 
 ## Example
 TODO
