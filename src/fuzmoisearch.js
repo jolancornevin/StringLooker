@@ -64,6 +64,19 @@ export default class FuzzySearch {
         });
     }
 
+    remove(target) {
+        let targetIndex = this.list.indexOf(target);
+        if (targetIndex == -1)
+            return;
+
+        this.list.splice(targetIndex, 1);
+
+        this._iterateTroughCached(target, (indexToDelete, _, cachedValue) => {
+            // Delete the target in the cached results
+            cachedValue.fuzzy.splice(indexToDelete, 1);
+            cachedValue.results.splice(indexToDelete, 1);
+        });
+    }
 
     /**
      * A generic method that iterate over the cached results and call the cb function when it find a place that match
