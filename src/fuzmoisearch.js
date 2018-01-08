@@ -57,6 +57,21 @@ export default class FuzzySearch {
         // TODO prepare
         this.list.push(target);
 
+        this._iterateTroughCached(target, (indexToInsert, result, cachedValue) => {
+            // Insert the new target in the cached results
+            cachedValue.fuzzy.splice(indexToInsert, 0, result);
+            cachedValue.results.splice(indexToInsert, 0, target);
+        });
+    }
+
+
+    /**
+     * A generic method that iterate over the cached results and call the cb function when it find a place that match
+     * @param target
+     * @param cb
+     * @private
+     */
+    _iterateTroughCached(target, cb) {
         this.cache.forEach((cachedValue, cachedQuery) => {
             // Find if the cached query can be found in the new target
             let fuzzyResult = fuzzysort.single(cachedQuery, target),
@@ -66,17 +81,13 @@ export default class FuzzySearch {
             // fuzzysort returns null if it doesn't find anything
             if (fuzzyResult && fuzzyResult.score > this.options.threshold) {
                 // Iterate in our cached results until we find a target that have a worst score than the new target
-                while (indexFuzzy < fuzzyLen && fuzzyResult.score > cachedValue.fuzzy[indexFuzzy++]);
-
-                // Insert the new element in the cached results at the right place
-                if (indexFuzzy == fuzzyLen) {
-                    cachedValue.fuzzy.push(fuzzyResult);
-                    cachedValue.results.push(target);
-                } else {
-                    cachedValue.fuzzy.splice(indexFuzzy - 1, 0, fuzzyResult);
-                    cachedValue.results.splice(indexFuzzy - 1, 0, target);
+                while (indexFuzzy < fuzzyLen && fuzzyResult.score < cachedValue.fuzzy[indexFuzzy].score) {
+                    // Do this here and not in the while statement to avoid having to decrease it at the end
+                    indexFuzzy++;
                 }
+
+                cb(indexFuzzy, fuzzyResult, cachedValue);
             }
-        })
+        });
     }
 }
