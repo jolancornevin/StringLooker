@@ -5,11 +5,9 @@ import fuzzysort from 'fuzzysort';
  * It uses a cache to avoid doing to many searchs
  */
 export default class FuzzySearch {
-    constructor(list, options) {
-        options = options || {};
-
-        this.list = list || [];
-        this.threshold = options.threshold || -Infinity;
+    constructor(list=[], options={}) {
+        this.list = list;
+        this.options = options;
         this.cache = new Map();
     }
 
@@ -33,8 +31,9 @@ export default class FuzzySearch {
         if (cachedRes)
             return cachedRes;
 
-        const allResults = fuzzysort.go(query, this.list, {'threshold': this.threshold}),
-            result = FuzzySearch._formatResult(allResults);
+        const result = FuzzySearch._formatResult(
+            fuzzysort.go(query, this.list, {'threshold': this.options.threshold})
+        );
 
         this.cache.set(query, result);
 
