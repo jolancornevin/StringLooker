@@ -5,9 +5,11 @@ import fuzzysort from 'fuzzysort';
  * It uses a cache to avoid doing to many searchs
  */
 export default class FuzzySearch {
-    constructor(list, threshold) {
+    constructor(list, options) {
+        options = options || {};
+
         this.list = list || [];
-        this.threshold = threshold || -Infinity;
+        this.threshold = options.threshold || -Infinity;
         this.cache = new Map();
     }
 
