@@ -1,4 +1,5 @@
 import fuzzysort from 'fuzzysort';
+import jaroWinkler from './talisman/jaro-winkler';
 
 const ENABLED = 'ENABLED';
 /**
@@ -40,7 +41,9 @@ export default class FuzzySearch {
             return cachedRes.results;
 
         const result = FuzzySearch._formatResult(
-            fuzzysort.go(query, this.list, this.options)
+            (this.options.fuzzySearch == ENABLED)?
+                fuzzysort.go(query, this.list, this.options):
+                this.simpleSeach(query, this.list, this.options)
         );
 
         this.cache.set(query, result);

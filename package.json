@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/jolancornevin/memoizedFuzzySearch#readme",
   "dependencies": {
-    "fast-memoize": "^2.2.8",
     "fuzzysort": "^1.0.3"
   },
   "devDependencies": {
