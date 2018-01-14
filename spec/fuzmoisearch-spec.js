@@ -1,20 +1,6 @@
 import FuzzySearch, {ALGORITHM} from '../src/fuzmoisearch';
 
-describe("FuzMoiSearch", function () {
-    it("Should return empty array by default", function () {
-        let fuzzy = new FuzzySearch(null, {algorithm: ALGORITHM.FUZZY});
-        expect(fuzzy.search()).toEqual([]);
-    });
-
-    it("Should return result when matching a string in array of string", function () {
-        var list = ['bonjour', 'bonsoir'],
-            search = 'bonjou';
-        expect(new FuzzySearch(list, {algorithm: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour']);
-
-        search = 'bon';
-        expect(new FuzzySearch(list, {algorithm: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour', 'bonsoir']);
-    });
-
+describe("FuzMoiSearch cache dehaviour", function () {
     it("Should use cache on duplicate request", function () {
         let list = ['bonjour', 'bonsoir'],
             search = 'bonjou',
@@ -88,8 +74,40 @@ describe("FuzMoiSearch", function () {
         spy.calls.reset();
 
         fuzzy.reset();
-        
+
         expect(fuzzy.search(search)).toEqual(['bonjour', 'bonjoureuh', 'bonjoureuhe', 'bonjoureuheuh']);
         expect(spy).toHaveBeenCalled();
+    });
+});
+
+describe("FuzMoiSearch FUZZY algorithm dehaviour", function () {
+    it("Should return empty array by default", function () {
+        let fuzzy = new FuzzySearch(null, {algorithm: ALGORITHM.FUZZY});
+        expect(fuzzy.search()).toEqual([]);
+    });
+
+    it("Should return result when matching a string in array of string and in right order", function () {
+        var list = ['bonjour', 'bonsoir'],
+            search = 'bonjou';
+        expect(new FuzzySearch(list, {algorithm: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour']);
+
+        search = 'bon';
+        expect(new FuzzySearch(list, {algorithm: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour', 'bonsoir']);
+    });
+});
+
+
+describe("FuzMoiSearch SIMI algorithm dehaviour", function () {
+    it("Should return empty array by default", function () {
+        let fuzzy = new FuzzySearch(null, {algorithm: ALGORITHM.SIMI});
+        expect(fuzzy.search()).toEqual([]);
+    });
+
+    it("Should return result when matching a string in array of string and in right order", function () {
+        var list = ['interna', 'intersideral', 'splinter', 'sdgjmds', 'mint', 'nope'],
+            search = 'int';
+        expect(new FuzzySearch(list, {algorithm: ALGORITHM.SIMI}).search(search)).toEqual(
+            ['interna', 'intersideral', 'mint', 'splinter', 'nope']
+        );
     });
 });
