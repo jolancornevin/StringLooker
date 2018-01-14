@@ -99,6 +99,11 @@ export default class FuzzySearch {
                     case ALGORITHM['STRICT_MATCH']:
                         if (element.target == query)
                             element.score = -1000;
+                        break;
+                    case ALGORITHM['START_WITH']:
+                        if (element.target.startsWith(query))
+                            element.score = (query_len - 1000) + element.target.length;
+                        break;
                 }
 
                 if (element.score > that.options.threshold) {
