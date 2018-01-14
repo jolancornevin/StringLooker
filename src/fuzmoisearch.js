@@ -4,7 +4,7 @@ import jaroWinkler from './talisman/jaro-winkler';
 const ENABLED = 'ENABLED';
 const ALGORITHM = {
     'FUZZY': 'FUZZY',
-    'JARO_WINKLER': 'JARO_WINKLER',
+    'SIMI': 'SIMI',
     'STRICT_MATCH': 'STRICT_MATCH',
     'START_WITH': 'START_WITH'
 };
@@ -23,7 +23,7 @@ export default class FuzzySearch {
         if (this.options.threshold > 0)
             this.options.threshold *= -1;
 
-        this.options.algorithm = ALGORITHM[options.algorithm] || ALGORITHM['JARO_WINKLER'];
+        this.options.algorithm = ALGORITHM[options.algorithm] || ALGORITHM['SIMI'];
 
         this.cache = new Map();
     }
@@ -47,7 +47,7 @@ export default class FuzzySearch {
         let index = 0,
             arrayLen = array.length;
 
-        for (; index < arrayLen && element.score < array[index].score ;index++);
+        for (; index < arrayLen && element.score > array[index].score; index++);
         array.splice(index, 0, element);
 
         return array;
@@ -61,28 +61,39 @@ export default class FuzzySearch {
      * @private
      */
     _doSearch(query) {
+        if (!this.list)
+            return FuzzySearch._formatResult([]);
+
         if (this.options.algorithm == ALGORITHM['FUZZY']) {
             return FuzzySearch._formatResult(
                 fuzzysort.go(query, this.list, this.options)
             );
         } else {
-            let result = [];
-            this.list.forEach(function(_element){
-                let score = 0,
-                    element = {
-                        target: _element,
-                        score: 0
-                    };
-                switch (this.options.algorithm) {
-                    case ALGORITHM['JARO_WINKLER']:
-                        // jaro return a score between 0 and 1. We want a negative one and between 0 and 100 instead
-                        element.score = jaroWinkler(query, element.target) * -100;
+            let result = [],
+                query_len = query.length,
+                that = this;
+            this.list.forEach(function (_element) {
+                let element = {
+                    target: _element,
+                    score: that.options.threshold
+                };
+
+                switch (that.options.algorithm) {
+                    case ALGORITHM['SIMI']:
+                        // This makes sure that element that start with the query are prioritised
+                        if (element.target.startsWith(query)) {
+                            element.score = (query_len - 1000) + element.target.length;
+                        } else {
+                            // jaro return a score between 0 and 1. We want a negative one and between 0 and 100 instead
+                            element.score = (jaroWinkler(query, element.target) * -100) || that.options.threshold;
+                        }
                 }
-                if (score > this.options.threshold) {
-                    result = this._insertSort(element, result);
+
+                if (element.score > that.options.threshold) {
+                    result = that._insertSort(element, result);
                 }
             });
-            return result;
+            return FuzzySearch._formatResult(result);
         }
     }
 
