@@ -112,7 +112,6 @@ describe("FuzMoiSearch SIMI algorithm behaviour", function () {
     });
 });
 
-
 describe("FuzMoiSearch STRICT_MATCH algorithm behaviour", function () {
     it("Should return empty array by default", function () {
         let fuzzy = new FuzzySearch(null, {algorithm: ALGORITHM.STRICT_MATCH});
@@ -123,5 +122,18 @@ describe("FuzMoiSearch STRICT_MATCH algorithm behaviour", function () {
         var list = ['nope', 'sdgjmds', 'mint', 'nope'];
         expect(new FuzzySearch(list, {algorithm: ALGORITHM.STRICT_MATCH}).search('int')).toEqual([]);
         expect(new FuzzySearch(list, {algorithm: ALGORITHM.STRICT_MATCH}).search('nope')).toEqual(['nope', 'nope']);
+    });
+});
+
+describe("FuzMoiSearch START_WITH algorithm behaviour", function () {
+    it("Should return empty array by default", function () {
+        let fuzzy = new FuzzySearch(null, {algorithm: ALGORITHM.START_WITH});
+        expect(fuzzy.search()).toEqual([]);
+    });
+
+    it("Should return result when matching a string in array of string and in right order", function () {
+        var list = ['nope', 'sdgjmds', 'inter', 'nope', 'noperator'];
+        expect(new FuzzySearch(list, {algorithm: ALGORITHM.START_WITH}).search('int')).toEqual(['inter']);
+        expect(new FuzzySearch(list, {algorithm: ALGORITHM.START_WITH}).search('nope')).toEqual(['nope', 'nope', 'noperator']);
     });
 });
