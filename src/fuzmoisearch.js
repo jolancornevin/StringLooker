@@ -14,7 +14,7 @@ export {ALGORITHM, ENABLED}
  * A small helper class that fuzzy search a string into a list of strings.
  * It uses a cache to avoid doing to many search
  */
-export default class FuzzySearch {
+export default class StringLooker {
     constructor(list = [], options = {}) {
         this.list = list;
         this.options = options;
@@ -69,10 +69,10 @@ export default class FuzzySearch {
      */
     _doSearch(query) {
         if (!this.list)
-            return FuzzySearch._formatResult([]);
+            return StringLooker._formatResult([]);
 
         if (this.options.algorithm == ALGORITHM['FUZZY']) {
-            return FuzzySearch._formatResult(
+            return StringLooker._formatResult(
                 fuzzysort.go(query, this.list, this.options)
             );
         } else {
@@ -111,7 +111,7 @@ export default class FuzzySearch {
                 }
             });
 
-            return FuzzySearch._formatResult(result);
+            return StringLooker._formatResult(result);
         }
     }
 
