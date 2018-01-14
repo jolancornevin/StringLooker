@@ -21,8 +21,8 @@ You can choose amongh multiples algorithms, like:
 ### Methods:
   - `search(query = '')`: Does the actuall search in the list :white_check_mark:
   - `add(target)`:  element to list of items :white_check_mark:
-  - `remove(target)`: element to list of items: :white_check_mark:
-  - `clear`: reset the cache
+  - `remove(target)`: element to list of items :white_check_mark:
+  - `reset`: reset the cache :white_check_mark:
 
 ## Example
 ```javascript 
