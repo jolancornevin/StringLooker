@@ -43,6 +43,13 @@ export default class FuzzySearch {
         };
     }
 
+    /**
+     * Insert in the ordered array.
+     * @param element
+     * @param array
+     * @returns {*}
+     * @private
+     */
     _insertSort(element, array) {
         let index = 0,
             arrayLen = array.length;
@@ -72,6 +79,7 @@ export default class FuzzySearch {
             let result = [],
                 query_len = query.length,
                 that = this;
+
             this.list.forEach(function (_element) {
                 let element = {
                     target: _element,
@@ -93,6 +101,7 @@ export default class FuzzySearch {
                     result = that._insertSort(element, result);
                 }
             });
+
             return FuzzySearch._formatResult(result);
         }
     }
