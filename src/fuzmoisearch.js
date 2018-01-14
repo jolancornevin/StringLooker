@@ -54,7 +54,7 @@ export default class FuzzySearch {
         let index = 0,
             arrayLen = array.length;
 
-        for (; index < arrayLen && element.score > array[index].score; index++);
+        for (; index < arrayLen && element.score >= array[index].score; index++);
         array.splice(index, 0, element);
 
         return array;
@@ -95,6 +95,10 @@ export default class FuzzySearch {
                             // jaro return a score between 0 and 1. We want a negative one and between 0 and 100 instead
                             element.score = (jaroWinkler(query, element.target) * -100) || that.options.threshold;
                         }
+                        break;
+                    case ALGORITHM['STRICT_MATCH']:
+                        if (element.target == query)
+                            element.score = -1000;
                 }
 
                 if (element.score > that.options.threshold) {
