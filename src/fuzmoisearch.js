@@ -16,9 +16,9 @@ export {ALGORITHM, ENABLED}
  */
 export default class FuzzySearch {
     constructor(list = [], options = {}) {
-        // TODO prepare
         this.list = list;
         this.options = options;
+
         this.options.threshold = options.threshold || -Infinity;
         if (this.options.threshold > 0)
             this.options.threshold *= -1;
@@ -142,7 +142,6 @@ export default class FuzzySearch {
      * @param target
      */
     add(target) {
-        // TODO prepare
         this.list.push(target);
 
         this._iterateTroughCached(target, (indexToInsert, result, cachedValue) => {
