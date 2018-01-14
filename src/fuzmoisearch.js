@@ -142,6 +142,9 @@ export default class StringLooker {
      * @param target
      */
     add(target) {
+        if (!target)
+            return;
+
         this.list.push(target);
 
         this._iterateTroughCached(target, (indexToInsert, result, cachedValue) => {
