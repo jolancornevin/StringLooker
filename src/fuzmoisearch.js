@@ -38,8 +38,8 @@ export default class FuzzySearch {
      */
     static _formatResult(results = []) {
         return {
-            'fuzzy': results,
-            'results': results.map(result => result['target'] || '')
+            'scored': results,
+            'list': results.map(result => result['target'] || '')
         };
     }
 
@@ -105,13 +105,13 @@ export default class FuzzySearch {
     search(query = '') {
         const cachedRes = this.cache.get(query);
         if (cachedRes)
-            return cachedRes.results;
+            return cachedRes.list;
 
         const result = this._doSearch(query);
 
         this.cache.set(query, result);
 
-        return result.results;
+        return result.list;
     }
 
     reset() {
@@ -129,8 +129,8 @@ export default class FuzzySearch {
 
         this._iterateTroughCached(target, (indexToInsert, result, cachedValue) => {
             // Insert the new target in the cached results
-            cachedValue.fuzzy.splice(indexToInsert, 0, result);
-            cachedValue.results.splice(indexToInsert, 0, target);
+            cachedValue.scored.splice(indexToInsert, 0, result);
+            cachedValue.list.splice(indexToInsert, 0, target);
         });
     }
 
@@ -147,8 +147,8 @@ export default class FuzzySearch {
 
         this._iterateTroughCached(target, (indexToDelete, _, cachedValue) => {
             // Delete the target in the cached results
-            cachedValue.fuzzy.splice(indexToDelete, 1);
-            cachedValue.results.splice(indexToDelete, 1);
+            cachedValue.scored.splice(indexToDelete, 1);
+            cachedValue.list.splice(indexToDelete, 1);
         });
     }
 
@@ -163,12 +163,12 @@ export default class FuzzySearch {
             // Find if the cached query can be found in the new target
             let fuzzyResult = fuzzysort.single(cachedQuery, target),
                 indexFuzzy = 0,
-                fuzzyLen = cachedValue.fuzzy.length;
+                fuzzyLen = cachedValue.scored.length;
 
             // fuzzysort returns null if it doesn't find anything
             if (fuzzyResult && fuzzyResult.score > this.options.threshold) {
                 // Iterate in our cached results until we find a target that have a worst score than the new target
-                while (indexFuzzy < fuzzyLen && fuzzyResult.score < cachedValue.fuzzy[indexFuzzy].score) {
+                while (indexFuzzy < fuzzyLen && fuzzyResult.score < cachedValue.scored[indexFuzzy].score) {
                     // Do this here and not in the while statement to avoid having to decrease it at the end
                     indexFuzzy++;
                 }
