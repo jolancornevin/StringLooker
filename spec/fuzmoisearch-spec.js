@@ -80,7 +80,7 @@ describe("FuzMoiSearch cache dehaviour", function () {
     });
 });
 
-describe("FuzMoiSearch FUZZY algorithm dehaviour", function () {
+describe("FuzMoiSearch FUZZY algorithm behaviour", function () {
     it("Should return empty array by default", function () {
         let fuzzy = new FuzzySearch(null, {algorithm: ALGORITHM.FUZZY});
         expect(fuzzy.search()).toEqual([]);
@@ -97,7 +97,7 @@ describe("FuzMoiSearch FUZZY algorithm dehaviour", function () {
 });
 
 
-describe("FuzMoiSearch SIMI algorithm dehaviour", function () {
+describe("FuzMoiSearch SIMI algorithm behaviour", function () {
     it("Should return empty array by default", function () {
         let fuzzy = new FuzzySearch(null, {algorithm: ALGORITHM.SIMI});
         expect(fuzzy.search()).toEqual([]);
