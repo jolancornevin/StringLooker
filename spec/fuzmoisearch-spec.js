@@ -1,24 +1,24 @@
-import FuzzySearch from '../src/fuzmoisearch';
+import FuzzySearch, {ALGORITHM} from '../src/fuzmoisearch';
 
 describe("FuzMoiSearch", function () {
     it("Should return empty array by default", function () {
-        let fuzzy = new FuzzySearch();
+        let fuzzy = new FuzzySearch(null, {algorithm: ALGORITHM.FUZZY});
         expect(fuzzy.search()).toEqual([]);
     });
 
     it("Should return result when matching a string in array of string", function () {
         var list = ['bonjour', 'bonsoir'],
             search = 'bonjou';
-        expect(new FuzzySearch(list).search(search)).toEqual(['bonjour']);
+        expect(new FuzzySearch(list, {algorithm: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour']);
 
         search = 'bon';
-        expect(new FuzzySearch(list).search(search)).toEqual(['bonjour', 'bonsoir']);
+        expect(new FuzzySearch(list, {algorithm: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour', 'bonsoir']);
     });
 
     it("Should use cache on duplicate request", function () {
         let list = ['bonjour', 'bonsoir'],
             search = 'bonjou',
-            fuzzy = new FuzzySearch(list),
+            fuzzy = new FuzzySearch(list, {algorithm: ALGORITHM.FUZZY}),
             // We spy on format result because we always use it when doing a request and it's easy to spy
             spy = spyOn(FuzzySearch, '_formatResult').and.callThrough();
 
@@ -33,7 +33,7 @@ describe("FuzMoiSearch", function () {
     it("Should add element to list", function () {
         let list = ['bonjour', 'bonsoir'],
             search = 'bonjou',
-            fuzzy = new FuzzySearch(list),
+            fuzzy = new FuzzySearch(list, {algorithm: ALGORITHM.FUZZY}),
             // We spy on format result because we always use it when doing a request and it's easy to spy
             spy = spyOn(FuzzySearch, '_formatResult').and.callThrough();
 
@@ -58,7 +58,7 @@ describe("FuzMoiSearch", function () {
     it("Should remove element to list", function () {
         let list = ['bonjour', 'bonjoureuh', 'bonjoureuhe', 'bonjoureuheuh', 'bonsoir'],
             search = 'bonjou',
-            fuzzy = new FuzzySearch(list),
+            fuzzy = new FuzzySearch(list, {algorithm: ALGORITHM.FUZZY}),
             // We spy on format result because we always use it when doing a request and it's easy to spy
             spy = spyOn(FuzzySearch, '_formatResult').and.callThrough();
 
@@ -79,7 +79,7 @@ describe("FuzMoiSearch", function () {
     it("Should clean cache", function () {
         let list = ['bonjour', 'bonjoureuh', 'bonjoureuhe', 'bonjoureuheuh', 'bonsoir'],
             search = 'bonjou',
-            fuzzy = new FuzzySearch(list),
+            fuzzy = new FuzzySearch(list, {algorithm: ALGORITHM.FUZZY}),
             // We spy on format result because we always use it when doing a request and it's easy to spy
             spy = spyOn(FuzzySearch, '_formatResult').and.callThrough();
 

@@ -2,9 +2,17 @@ import fuzzysort from 'fuzzysort';
 import jaroWinkler from './talisman/jaro-winkler';
 
 const ENABLED = 'ENABLED';
+const ALGORITHM = {
+    'FUZZY': 'FUZZY',
+    'JARO_WINKLER': 'JARO_WINKLER',
+    'STRICT_MATCH': 'STRICT_MATCH',
+    'START_WITH': 'START_WITH'
+};
+
+export {ALGORITHM, ENABLED}
 /**
  * A small helper class that fuzzy search a string into a list of strings.
- * It uses a cache to avoid doing to many searchs
+ * It uses a cache to avoid doing to many search
  */
 export default class FuzzySearch {
     constructor(list = [], options = {}) {
@@ -12,6 +20,11 @@ export default class FuzzySearch {
         this.list = list;
         this.options = options;
         this.options.threshold = options.threshold || -Infinity;
+        if (this.options.threshold > 0)
+            this.options.threshold *= -1;
+
+        this.options.algorithm = ALGORITHM[options.algorithm] || ALGORITHM['JARO_WINKLER'];
+
         this.cache = new Map();
     }
 
@@ -30,6 +43,49 @@ export default class FuzzySearch {
         };
     }
 
+    _insertSort(element, array) {
+        let index = 0,
+            arrayLen = array.length;
+
+        for (; index < arrayLen && element.score < array[index].score ;index++);
+        array.splice(index, 0, element);
+
+        return array;
+    }
+
+    /**
+     * This methods does the actual search among strings, depending on the algorithm,
+     * and return the sorted array of results, from best to worst match
+     * @param query
+     * @returns {{fuzzy, results}|*}
+     * @private
+     */
+    _doSearch(query) {
+        if (this.options.algorithm == ALGORITHM['FUZZY']) {
+            return FuzzySearch._formatResult(
+                fuzzysort.go(query, this.list, this.options)
+            );
+        } else {
+            let result = [];
+            this.list.forEach(function(_element){
+                let score = 0,
+                    element = {
+                        target: _element,
+                        score: 0
+                    };
+                switch (this.options.algorithm) {
+                    case ALGORITHM['JARO_WINKLER']:
+                        // jaro return a score between 0 and 1. We want a negative one and between 0 and 100 instead
+                        element.score = jaroWinkler(query, element.target) * -100;
+                }
+                if (score > this.options.threshold) {
+                    result = this._insertSort(element, result);
+                }
+            });
+            return result;
+        }
+    }
+
     /**
      * Call this method to do a query on the list and look for matching strings
      * @param query
@@ -40,18 +96,14 @@ export default class FuzzySearch {
         if (cachedRes)
             return cachedRes.results;
 
-        const result = FuzzySearch._formatResult(
-            (this.options.fuzzySearch == ENABLED)?
-                fuzzysort.go(query, this.list, this.options):
-                this.simpleSeach(query, this.list, this.options)
-        );
+        const result = this._doSearch(query);
 
         this.cache.set(query, result);
 
         return result.results;
     }
 
-    reset () {
+    reset() {
         this.cache = new Map();
     }
 
