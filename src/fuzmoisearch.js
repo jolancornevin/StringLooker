@@ -45,10 +45,9 @@ export default class StringLooker {
     constructor(list = [], options = {}) {
         this.list = list;
         this.options = options;
+        this.cache = new Map();
 
-        this.options.threshold = options.threshold || -Infinity;
-        if (this.options.threshold > 0)
-            this.options.threshold *= -1;
+        this.options.threshold = options.threshold || -1;
 
         if (typeof options.comparator !== 'function' && options.comparator !== ALGORITHM['FUZZY'])
             options.comparator = null;
@@ -82,7 +81,7 @@ export default class StringLooker {
         let index = 0,
             arrayLen = array.length;
 
-        for (; index < arrayLen && element.score >= array[index].score; index++);
+        for (; index < arrayLen && element.score <= array[index].score; index++);
         array.splice(index, 0, element);
 
         return array;
@@ -194,6 +193,7 @@ export default class StringLooker {
     _iterateTroughCached(target, cb) {
         this.cache.forEach((cachedValue, cachedQuery) => {
             // Find if the cached query can be found in the new target
+            // TODO UPDATE THIS
             let fuzzyResult = fuzzysort.single(cachedQuery, target),
                 indexFuzzy = 0,
                 fuzzyLen = cachedValue.scored.length;
@@ -201,10 +201,7 @@ export default class StringLooker {
             // fuzzysort returns null if it doesn't find anything
             if (fuzzyResult && fuzzyResult.score > this.options.threshold) {
                 // Iterate in our cached results until we find a target that have a worst score than the new target
-                while (indexFuzzy < fuzzyLen && fuzzyResult.score < cachedValue.scored[indexFuzzy].score) {
-                    // Do this here and not in the while statement to avoid having to decrease it at the end
-                    indexFuzzy++;
-                }
+                for (;indexFuzzy < fuzzyLen && fuzzyResult.score >= cachedValue.scored[indexFuzzy].score; indexFuzzy++);
 
                 cb(indexFuzzy, fuzzyResult, cachedValue);
             }
