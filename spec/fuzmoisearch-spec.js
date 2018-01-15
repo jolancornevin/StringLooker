@@ -80,7 +80,7 @@ describe("FuzMoiSearch cache dehaviour", function () {
     });
 });
 
-describe("FuzMoiSearch FUZZY algorithm behaviour", function () {
+describe("FuzMoiSearch FUZZY comparator behaviour", function () {
     it("Should return empty array by default", function () {
         let fuzzy = new StringLooker(null, {comparator: ALGORITHM.FUZZY});
         expect(fuzzy.search()).toEqual([]);
@@ -133,7 +133,21 @@ describe("FuzMoiSearch START_WITH comparator behaviour", function () {
 
     it("Should return result when matching a string in array of string and in right order", function () {
         var list = ['nope', 'sdgjmds', 'inter', 'nope', 'noperator'];
-        expect(new StringLooker(list, {algorithm: ALGORITHM.START_WITH}).search('int')).toEqual(['inter']);
-        expect(new StringLooker(list, {algorithm: ALGORITHM.START_WITH}).search('nope')).toEqual(['nope', 'nope', 'noperator']);
+        expect(new StringLooker(list, {comparator: ALGORITHM.START_WITH}).search('int')).toEqual(['inter']);
+        expect(new StringLooker(list, {comparator: ALGORITHM.START_WITH}).search('nope')).toEqual(['nope', 'nope', 'noperator']);
+    });
+});
+
+describe("FuzMoiSearch custom comparator behaviour", function () {
+    it("Should return empty array by default", function () {
+        let fuzzy = new StringLooker(null, {comparator: () => {}});
+        expect(fuzzy.search()).toEqual([]);
+    });
+
+    it("Should return result when matching a string in array of string and in right order", function () {
+        var list = ['123', '12', '123456'];
+        expect(new StringLooker(list, {comparator: (target, query) => {
+            return 100 - target.length + query.length
+        }}).search('12')).toEqual(['12', '123', '123456']);
     });
 });
