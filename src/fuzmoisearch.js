@@ -4,9 +4,23 @@ import jaroWinkler from './talisman/jaro-winkler';
 const ENABLED = 'ENABLED';
 const ALGORITHM = {
     'FUZZY': 'FUZZY',
-    'SIMI': 'SIMI',
-    'STRICT_MATCH': 'STRICT_MATCH',
-    'START_WITH': 'START_WITH'
+    'SIMI': (target, query, query_len) => {
+        // This makes sure that element that start with the query are prioritised
+        if (target.startsWith(query)) {
+            return 10000 + query_len - target.length;
+        } else {
+            // jaro return a score between 0 and 1. We want a negative one and between 0 and 100 instead
+            return (jaroWinkler(query, target) * 100);
+        }
+    },
+    'STRICT_MATCH': (target, query) => {
+        if (target == query)
+            return 1000;
+    },
+    'START_WITH': (target, query, query_len) => {
+        if (target.startsWith(query))
+            return 10000 + query_len - target.length;
+    }
 };
 
 export {ALGORITHM, ENABLED}
@@ -23,9 +37,10 @@ export default class StringLooker {
         if (this.options.threshold > 0)
             this.options.threshold *= -1;
 
-        this.options.algorithm = ALGORITHM[options.algorithm] || ALGORITHM['SIMI'];
+        if (typeof options.comparator !== 'function' && options.comparator !== ALGORITHM['FUZZY'])
+            options.comparator = null;
 
-        this.cache = new Map();
+        this.options.algorithm = options.comparator || ALGORITHM['SIMI'];
     }
 
     /**
@@ -83,28 +98,14 @@ export default class StringLooker {
             this.list.forEach(function (_element) {
                 let element = {
                     target: _element,
-                    score: that.options.threshold
+                    score: null
                 };
 
-                switch (that.options.algorithm) {
-                    case ALGORITHM['SIMI']:
-                        // This makes sure that element that start with the query are prioritised
-                        if (element.target.startsWith(query)) {
-                            element.score = (query_len - 1000) + element.target.length;
-                        } else {
-                            // jaro return a score between 0 and 1. We want a negative one and between 0 and 100 instead
-                            element.score = (jaroWinkler(query, element.target) * -100) || that.options.threshold;
-                        }
-                        break;
-                    case ALGORITHM['STRICT_MATCH']:
-                        if (element.target == query)
-                            element.score = -1000;
-                        break;
-                    case ALGORITHM['START_WITH']:
-                        if (element.target.startsWith(query))
-                            element.score = (query_len - 1000) + element.target.length;
-                        break;
-                }
+                element.score = _xOrThreshold(
+                    that.options.algorithm(element.target, query, query_len),
+                    that.options.threshold
+                );
+                console.info(element);
 
                 if (element.score > that.options.threshold) {
                     result = that._insertSort(element, result);
@@ -128,7 +129,6 @@ export default class StringLooker {
         const result = this._doSearch(query);
 
         this.cache.set(query, result);
-
         return result.list;
     }
 
