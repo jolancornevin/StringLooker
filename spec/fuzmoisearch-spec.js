@@ -4,7 +4,7 @@ describe("FuzMoiSearch cache dehaviour", function () {
     it("Should use cache on duplicate request", function () {
         let list = ['bonjour', 'bonsoir'],
             search = 'bonjou',
-            fuzzy = new StringLooker(list, {algorithm: ALGORITHM.FUZZY}),
+            fuzzy = new StringLooker(list, {comparator: ALGORITHM.FUZZY}),
             // We spy on format result because we always use it when doing a request and it's easy to spy
             spy = spyOn(StringLooker, '_formatResult').and.callThrough();
 
@@ -19,7 +19,7 @@ describe("FuzMoiSearch cache dehaviour", function () {
     it("Should add element to list", function () {
         let list = ['bonjour', 'bonsoir'],
             search = 'bonjou',
-            fuzzy = new StringLooker(list, {algorithm: ALGORITHM.FUZZY}),
+            fuzzy = new StringLooker(list, {comparator: ALGORITHM.FUZZY}),
             // We spy on format result because we always use it when doing a request and it's easy to spy
             spy = spyOn(StringLooker, '_formatResult').and.callThrough();
 
@@ -44,7 +44,7 @@ describe("FuzMoiSearch cache dehaviour", function () {
     it("Should remove element to list", function () {
         let list = ['bonjour', 'bonjoureuh', 'bonjoureuhe', 'bonjoureuheuh', 'bonsoir'],
             search = 'bonjou',
-            fuzzy = new StringLooker(list, {algorithm: ALGORITHM.FUZZY}),
+            fuzzy = new StringLooker(list, {comparator: ALGORITHM.FUZZY}),
             // We spy on format result because we always use it when doing a request and it's easy to spy
             spy = spyOn(StringLooker, '_formatResult').and.callThrough();
 
@@ -65,7 +65,7 @@ describe("FuzMoiSearch cache dehaviour", function () {
     it("Should clean cache", function () {
         let list = ['bonjour', 'bonjoureuh', 'bonjoureuhe', 'bonjoureuheuh', 'bonsoir'],
             search = 'bonjou',
-            fuzzy = new StringLooker(list, {algorithm: ALGORITHM.FUZZY}),
+            fuzzy = new StringLooker(list, {comparator: ALGORITHM.FUZZY}),
             // We spy on format result because we always use it when doing a request and it's easy to spy
             spy = spyOn(StringLooker, '_formatResult').and.callThrough();
 
@@ -82,52 +82,52 @@ describe("FuzMoiSearch cache dehaviour", function () {
 
 describe("FuzMoiSearch FUZZY algorithm behaviour", function () {
     it("Should return empty array by default", function () {
-        let fuzzy = new StringLooker(null, {algorithm: ALGORITHM.FUZZY});
+        let fuzzy = new StringLooker(null, {comparator: ALGORITHM.FUZZY});
         expect(fuzzy.search()).toEqual([]);
     });
 
     it("Should return result when matching a string in array of string and in right order", function () {
         var list = ['bonjour', 'bonsoir'],
             search = 'bonjou';
-        expect(new StringLooker(list, {algorithm: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour']);
+        expect(new StringLooker(list, {comparator: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour']);
 
         search = 'bon';
-        expect(new StringLooker(list, {algorithm: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour', 'bonsoir']);
+        expect(new StringLooker(list, {comparator: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour', 'bonsoir']);
     });
 });
 
 
-describe("FuzMoiSearch SIMI algorithm behaviour", function () {
+describe("FuzMoiSearch SIMI comparator behaviour", function () {
     it("Should return empty array by default", function () {
-        let fuzzy = new StringLooker(null, {algorithm: ALGORITHM.SIMI});
+        let fuzzy = new StringLooker(null, {comparator: ALGORITHM.SIMI});
         expect(fuzzy.search()).toEqual([]);
     });
 
     it("Should return result when matching a string in array of string and in right order", function () {
         var list = ['interna', 'intersideral', 'splinter', 'sdgjmds', 'mint', 'nope'],
             search = 'int';
-        expect(new StringLooker(list, {algorithm: ALGORITHM.SIMI}).search(search)).toEqual(
+        expect(new StringLooker(list, {comparator: ALGORITHM.SIMI, threshold: 1}).search(search)).toEqual(
             ['interna', 'intersideral', 'mint', 'splinter', 'nope']
         );
     });
 });
 
-describe("FuzMoiSearch STRICT_MATCH algorithm behaviour", function () {
+describe("FuzMoiSearch STRICT_MATCH comparator behaviour", function () {
     it("Should return empty array by default", function () {
-        let fuzzy = new StringLooker(null, {algorithm: ALGORITHM.STRICT_MATCH});
+        let fuzzy = new StringLooker(null, {comparator: ALGORITHM.STRICT_MATCH});
         expect(fuzzy.search()).toEqual([]);
     });
 
     it("Should return result when matching a string in array of string and in right order", function () {
         var list = ['nope', 'sdgjmds', 'mint', 'nope'];
-        expect(new StringLooker(list, {algorithm: ALGORITHM.STRICT_MATCH}).search('int')).toEqual([]);
-        expect(new StringLooker(list, {algorithm: ALGORITHM.STRICT_MATCH}).search('nope')).toEqual(['nope', 'nope']);
+        expect(new StringLooker(list, {comparator: ALGORITHM.STRICT_MATCH}).search('int')).toEqual([]);
+        expect(new StringLooker(list, {comparator: ALGORITHM.STRICT_MATCH}).search('nope')).toEqual(['nope', 'nope']);
     });
 });
 
-describe("FuzMoiSearch START_WITH algorithm behaviour", function () {
+describe("FuzMoiSearch START_WITH comparator behaviour", function () {
     it("Should return empty array by default", function () {
-        let fuzzy = new StringLooker(null, {algorithm: ALGORITHM.START_WITH});
+        let fuzzy = new StringLooker(null, {comparator: ALGORITHM.START_WITH});
         expect(fuzzy.search()).toEqual([]);
     });
 
