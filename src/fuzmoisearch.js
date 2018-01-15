@@ -22,8 +22,21 @@ const ALGORITHM = {
             return 10000 + query_len - target.length;
     }
 };
-
 export {ALGORITHM, ENABLED}
+
+
+const _negate = (x) => {
+    if (x > 0)
+        x *= -1;
+    return x;
+};
+
+const _xOrThreshold = (x, threshold) => {
+    if (x != null && x != undefined)
+        return x;
+    return threshold;
+};
+
 /**
  * A small helper class that fuzzy search a string into a list of strings.
  * It uses a cache to avoid doing to many search
