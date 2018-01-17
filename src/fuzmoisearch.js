@@ -3,7 +3,13 @@ import jaroWinkler from './talisman/jaro-winkler';
 
 const ENABLED = 'ENABLED';
 const ALGORITHM = {
-    'FUZZY': 'FUZZY',
+    'FUZZY': (target, query) => {
+        // fuzzysort.single can return null
+        let score = fuzzysort.single(query, target);
+        if (score)
+        // fuzzy returns negative scores
+            return 10000 - (score.score * -1);
+    },
     'SIMI': (target, query, query_len) => {
         // This makes sure that element that start with the query are prioritised
         if (target.startsWith(query)) {
@@ -49,7 +55,7 @@ export default class StringLooker {
 
         this.options.threshold = options.threshold || -1;
 
-        if (typeof options.comparator !== 'function' && options.comparator !== ALGORITHM['FUZZY'])
+        if (typeof options.comparator !== 'function')
             options.comparator = null;
 
         this.options.algorithm = options.comparator || ALGORITHM['SIMI'];
@@ -98,34 +104,27 @@ export default class StringLooker {
         if (!this.list)
             return StringLooker._formatResult([]);
 
-        if (this.options.algorithm == ALGORITHM['FUZZY']) {
-            return StringLooker._formatResult(
-                fuzzysort.go(query, this.list, this.options)
+        let result = [],
+            query_len = query.length,
+            that = this;
+
+        this.list.forEach(function (_element) {
+            let element = {
+                target: _element,
+                score: null
+            };
+
+            element.score = _xOrThreshold(
+                that.options.algorithm(element.target, query, query_len),
+                that.options.threshold
             );
-        } else {
-            let result = [],
-                query_len = query.length,
-                that = this;
 
-            this.list.forEach(function (_element) {
-                let element = {
-                    target: _element,
-                    score: null
-                };
+            if (element.score > that.options.threshold) {
+                result = that._insertSort(element, result).array;
+            }
+        });
 
-                element.score = _xOrThreshold(
-                    that.options.algorithm(element.target, query, query_len),
-                    that.options.threshold
-                );
-                console.info(element);
-
-                if (element.score > that.options.threshold) {
-                    result = that._insertSort(element, result);
-                }
-            });
-
-            return StringLooker._formatResult(result);
-        }
+        return StringLooker._formatResult(result);
     }
 
     /**
