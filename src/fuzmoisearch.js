@@ -155,10 +155,19 @@ export default class StringLooker {
 
         this.list.push(target);
 
-        this._iterateTroughCached(target, (indexToInsert, result, cachedValue) => {
-            // Insert the new target in the cached results
-            cachedValue.scored.splice(indexToInsert, 0, result);
-            cachedValue.list.splice(indexToInsert, 0, target);
+        let that = this;
+        this.cache.forEach((cachedResults, cachedQuery) => {
+            // Find if the cached query can be found in the new target
+            let element = {
+                target: target,
+                score: that.options.algorithm(target, cachedQuery, cachedQuery.length)
+            };
+
+            // fuzzysort returns null if it doesn't find anything
+            if (element.score && element.score > this.options.threshold) {
+                let index = that._insertSort(element, cachedResults.scored).index;
+                cachedResults.list.splice(index, 0, element.target);
+            }
         });
     }
 
