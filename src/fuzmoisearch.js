@@ -182,34 +182,12 @@ export default class StringLooker {
 
         this.list.splice(targetIndex, 1);
 
-        this._iterateTroughCached(target, (indexToDelete, _, cachedValue) => {
+        this.cache.forEach((cachedResults, cachedQuery) => {
+            let indexToRemove = 0, listLen = cachedResults.list.length;
+            while (cachedResults.list[indexToRemove] != target && indexToRemove++ < listLen);
             // Delete the target in the cached results
-            cachedValue.scored.splice(indexToDelete, 1);
-            cachedValue.list.splice(indexToDelete, 1);
-        });
-    }
-
-    /**
-     * A generic method that iterate over the cached results and call the cb function when it find a place that match
-     * @param target
-     * @param cb
-     * @private
-     */
-    _iterateTroughCached(target, cb) {
-        this.cache.forEach((cachedValue, cachedQuery) => {
-            // Find if the cached query can be found in the new target
-            // TODO UPDATE THIS
-            let fuzzyResult = fuzzysort.single(cachedQuery, target),
-                indexFuzzy = 0,
-                fuzzyLen = cachedValue.scored.length;
-
-            // fuzzysort returns null if it doesn't find anything
-            if (fuzzyResult && fuzzyResult.score > this.options.threshold) {
-                // Iterate in our cached results until we find a target that have a worst score than the new target
-                for (;indexFuzzy < fuzzyLen && fuzzyResult.score >= cachedValue.scored[indexFuzzy].score; indexFuzzy++);
-
-                cb(indexFuzzy, fuzzyResult, cachedValue);
-            }
+            cachedResults.scored.splice(indexToRemove, 1);
+            cachedResults.list.splice(indexToRemove, 1);
         });
     }
 }
