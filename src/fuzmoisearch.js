@@ -21,7 +21,7 @@ const ALGORITHM = {
     },
     'STRICT_MATCH': (target, query) => {
         if (target == query)
-            return 1000;
+            return 10000;
     },
     'START_WITH': (target, query, query_len) => {
         if (target.startsWith(query))
@@ -30,12 +30,6 @@ const ALGORITHM = {
 };
 export {ALGORITHM, ENABLED}
 
-
-const _negate = (x) => {
-    if (x > 0)
-        x *= -1;
-    return x;
-};
 
 const _xOrThreshold = (x, threshold) => {
     if (x != null && x != undefined)
@@ -90,7 +84,10 @@ export default class StringLooker {
         for (; index < arrayLen && element.score <= array[index].score; index++);
         array.splice(index, 0, element);
 
-        return array;
+        return {
+            "array": array,
+            "index": index
+        };
     }
 
     /**

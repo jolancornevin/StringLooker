@@ -89,6 +89,7 @@ describe("FuzMoiSearch FUZZY comparator behaviour", function () {
     it("Should return result when matching a string in array of string and in right order", function () {
         var list = ['bonjour', 'bonsoir'],
             search = 'bonjou';
+
         expect(new StringLooker(list, {comparator: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour']);
 
         search = 'bon';
