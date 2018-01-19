@@ -4,8 +4,8 @@
   "description": "A minimal memoized fuzzy search javascript library",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine",
-    "build": "babel src -d lib"
+    "test": "./node_modules/.bin/jasmine",
+    "build": "./node_modules/.bin/babel . --ignore node_modules/,dist/ -d dist --preset es2016 --plugins=transform-es2015-modules-commonjs"
   },
   "repository": {
     "type": "git",
