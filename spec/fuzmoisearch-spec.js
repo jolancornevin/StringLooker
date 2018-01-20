@@ -148,7 +148,7 @@ describe("FuzMoiSearch custom comparator behaviour", function () {
     it("Should return result when matching a string in array of string and in right order", function () {
         var list = ['123', '12', '123456'];
         expect(new StringLooker(list, {comparator: (target, query) => {
-            return 100 - target.length + query.length
-        }}).search('12')).toEqual(['12', '123', '123456']);
+            return target.length;
+        }}).search('12')).toEqual(['123456', '123', '12']);
     });
 });
