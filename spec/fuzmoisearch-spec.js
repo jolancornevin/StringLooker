@@ -93,7 +93,7 @@ describe("FuzMoiSearch FUZZY comparator behaviour", function () {
         expect(new StringLooker(list, {comparator: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour']);
 
         search = 'bon';
-        expect(new StringLooker(list, {comparator: ALGORITHM.FUZZY}).search(search)).toEqual(['bonjour', 'bonsoir']);
+        expect(new StringLooker(list, {comparator: ALGORITHM.FUZZY}).search(search)).toEqual(['bonsoir', 'bonjour']);
     });
 });
 
