@@ -86,7 +86,7 @@ export default class StringLooker {
                 score: null
             };
 
-            element.score = _xOrThreshold(
+            element.score = xOrThreshold(
                 that.options.algorithm(element.target, query, query_len),
                 that.options.threshold
             );
@@ -143,7 +143,7 @@ export default class StringLooker {
 
             // fuzzysort returns null if it doesn't find anything
             if (element.score && element.score > this.options.threshold) {
-                let index = _insertSort(element, cachedResults.scored).index;
+                let index = insertSort(element, cachedResults.scored).index;
                 cachedResults.list.splice(index, 0, element.target);
             }
         });
