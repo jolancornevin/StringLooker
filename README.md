@@ -35,4 +35,14 @@ looker.search('l');                   // => ['luc', 'leila']
 looker.add('kylo')
 
 looker.search('l');                   // => ['luc', 'leila', 'kylo'] and no search actually done !
+
+// Using a custom algoritm
+looker = new StringLooker(
+  ['123', '12', '123456'], {
+    comparator: (target, query) => {
+      return target.length;
+    }
+  })
+
+looker.search('12')                   // => ['123456', '123', '12']
 ```
