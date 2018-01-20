@@ -37,6 +37,28 @@ const _xOrThreshold = (x, threshold) => {
     return threshold;
 };
 
+
+/**
+ * Insert in the ordered array.
+ *
+ * @param element
+ * @param array
+ * @returns {*}
+ * @private
+ */
+const _insertSort = (element, array) => {
+    let index = 0,
+        arrayLen = array.length;
+
+    for (; index < arrayLen && element.score <= array[index].score; index++);
+    array.splice(index, 0, element);
+
+    return {
+        "array": array,
+        "index": index
+    };
+};
+
 /**
  * A small helper class that fuzzy search a string into a list of strings.
  * It uses a cache to avoid doing to many search
@@ -71,26 +93,6 @@ export default class StringLooker {
     }
 
     /**
-     * Insert in the ordered array.
-     * @param element
-     * @param array
-     * @returns {*}
-     * @private
-     */
-    _insertSort(element, array) {
-        let index = 0,
-            arrayLen = array.length;
-
-        for (; index < arrayLen && element.score <= array[index].score; index++);
-        array.splice(index, 0, element);
-
-        return {
-            "array": array,
-            "index": index
-        };
-    }
-
-    /**
      * This methods does the actual search among strings, depending on the algorithm,
      * and return the sorted array of results, from best to worst match
      * @param query
@@ -117,7 +119,7 @@ export default class StringLooker {
             );
 
             if (element.score > that.options.threshold) {
-                result = that._insertSort(element, result).array;
+                result = _insertSort(element, result).array;
             }
         });
 
@@ -168,7 +170,7 @@ export default class StringLooker {
 
             // fuzzysort returns null if it doesn't find anything
             if (element.score && element.score > this.options.threshold) {
-                let index = that._insertSort(element, cachedResults.scored).index;
+                let index = _insertSort(element, cachedResults.scored).index;
                 cachedResults.list.splice(index, 0, element.target);
             }
         });
