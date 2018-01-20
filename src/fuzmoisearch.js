@@ -140,6 +140,9 @@ export default class StringLooker {
         return result.list;
     }
 
+    /**
+     * Reset the cache
+     */
     reset() {
         this.cache = new Map();
     }
