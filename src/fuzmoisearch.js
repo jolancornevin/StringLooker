@@ -1,5 +1,5 @@
 import fuzzysort from 'fuzzysort';
-import {_xOrThreshold, _insertSort} from './utils'
+import {xOrThreshold, insertSort, quickSort} from './utils'
 import jaroWinkler from './talisman/jaro-winkler';
 
 const ENABLED = 'ENABLED';
@@ -92,11 +92,11 @@ export default class StringLooker {
             );
 
             if (element.score > that.options.threshold) {
-                result = _insertSort(element, result).array;
+                result.push(element);
             }
         });
 
-        return StringLooker._formatResult(result);
+        return StringLooker._formatResult(quickSort(result));
     }
 
     /**
